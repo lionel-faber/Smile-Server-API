@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Simple Mobile Instant Learning Environment</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'serverweb/css/style.css' %}" />
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyD1xt1vW7bslVd4WABHYdsxmt_cnqDWGB0",
+        authDomain: "smile-aff5a.firebaseapp.com",
+        databaseURL: "https://smile-aff5a.firebaseio.com",
+        projectId: "smile-aff5a",
+        storageBucket: "smile-aff5a.appspot.com",
+        messagingSenderId: "1056667244830"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script type="text/javascript">
+      initApp = function() {
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            // User is signed in.
+            window.location.replace('authorize');
+
+          } else {
+            // User is signed out.
+            window.location.replace('login');
+
+          }
+        }, function(error) {
+          console.log(error);
+        });
+      };
+
+      window.addEventListener('load', function() {
+        initApp()
+      });
+    </script>
+  </head>
+<body>
+</body>
+</html>

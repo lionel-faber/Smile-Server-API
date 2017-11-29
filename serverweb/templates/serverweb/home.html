@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Simple Mobile Instant Learning Environment</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'serverweb/css/style.css' %}" />
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyD1xt1vW7bslVd4WABHYdsxmt_cnqDWGB0",
+        authDomain: "smile-aff5a.firebaseapp.com",
+        databaseURL: "https://smile-aff5a.firebaseio.com",
+        projectId: "smile-aff5a",
+        storageBucket: "smile-aff5a.appspot.com",
+        messagingSenderId: "1056667244830"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script type="text/javascript">
+      initApp = function() {
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            // User is signed in.
+            var displayName = user.displayName;
+            var email = user.email;
+            var emailVerified = user.emailVerified;
+            var photoURL = user.photoURL;
+            var uid = user.uid;
+            var phoneNumber = user.phoneNumber;
+            var providerData = user.providerData;
+            user.getIdToken().then(function(accessToken) {
+              document.getElementById('username').textContent = displayName;
+              document.getElementById('email').textContent = email;
+              document.getElementById('sign-in-status').textContent = 'Signed in';
+              document.getElementById('sign-in').textContent = 'Sign out';
+              document.getElementById('account-details').textContent = JSON.stringify({
+                displayName: displayName,
+                email: email,
+                emailVerified: emailVerified,
+                phoneNumber: phoneNumber,
+                photoURL: photoURL,
+                uid: uid,
+                accessToken: accessToken,
+                providerData: providerData
+              }, null, '  ');
+            });
+          } else {
+            // User is signed out.
+            document.getElementById('sign-in-status').textContent = 'Signed out';
+            document.getElementById('sign-in').textContent = 'Sign in';
+            document.getElementById('account-details').textContent = 'null';
+          }
+        }, function(error) {
+          console.log(error);
+        });
+      };
+
+      window.addEventListener('load', function() {
+        initApp()
+      });
+
+      function signOut()
+      {
+        firebase.auth().signOut().then(function() {
+          window.location.replace('/web')
+// Sign-out successful.
+}, function(error) {
+// An error happened.
+});
+      }
+    </script>
+  </head>
+  <body>
+    <div class="header" id="header">
+    <div class="rx_icon" id="rx_icon"></div>
+    <div class="title" id="title">Drawer Example</div>
+</div>
+<div class="container">
+    <div class="content">
+        <h2>About this</h2>
+        <p>This library contains <a href="https://material.google.com/patterns/navigation-drawer.html">Material Design Navigation Drawer</a> component that could be easily put in your site.</p>
+        <p>You can move drawer with touch event :)</p>
+        <p>Drawer perfectly worked on <b>Desktop</b> and <b>Mobile</b> devices.</p>
+        <p>You can add any content to drawer. <b>Links</b> and <b>event</b>(onclick, etc.) working ok.</p>
+        <p>Used Hamburger icon: <a href="http://www.materialup.com/posts/toolbar-back-arrow" target="_blank">Hamburger To Back Arrow</a></p>
+        <p>More info see in GitHub: <a href="https://github.com/RadiationX/Material-Drawer" target="_blank">Material-Drawer</a></p>
+        <sub>I set "float to right" to title and icon only for example :)</sub>
+    </div>
+</div>
+<div class="drawer" id="drawer">
+    <div class="content">
+        <div class="header">
+            <div class="avatar"></div>
+            <div class="text">
+                <div class="field name" id="username"></div>
+                <div class="field info" id="email"></div>
+            </div>
+        </div>
+        <ul class="menu">
+            <li class="item">Subjects</li>
+            <li class="item">Information</li>
+            <li class="item">Schedule</li>
+            <li class="item">Placement</li>
+            <li class="item subheader">Communicate</li>
+            <li class="item">Contact US</li>
+            <li class="item" onclick="signOut()">Sign out</li>
+        </ul>
+    </div>
+</div>
+
+    <script  src="{% static 'serverweb/js/home.js' %}"></script>
+
+
+    <!-- <div id="sign-in-status"></div>
+    <div id="sign-in"></div>
+    <div id="account-details"></div> -->
+  </body>
+</html>
