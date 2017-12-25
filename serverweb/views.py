@@ -31,6 +31,20 @@ def submit(request):
     sem = request.POST.get('semester')
     typ = request.POST.get('type')
     notif = request.POST.get('notif')
+    if typ.encode('utf8') == '4':
+        subject = request.POST.get('subject_title')
+        notes_type = request.POST.get('notes_type')
+        title = request.POST.get('notes_title')
+        link = request.POST.get('notes_link')
+        sub = Subject.objects.get(code = subject)
+        entry = Link(subject = sub, title = title, link = link, notesType = notes_type)
+        entry.save()
+    elif typ.encode('utf8') != '5':
+        title = request.POST.get('info_title')
+        details = request.POST.get('info_details')
+        date = request.POST.get('info_date')
+        entry = Info(title = title, infoType = typ, semester = sem, subInfos = details, date = date)
+        entry.save()
     if notif.encode('utf8') == 'yes':
         title = request.POST.get('notif_title')
         msg = request.POST.get('notif_details')
@@ -41,27 +55,10 @@ def submit(request):
                 "message" : msg,
                 "content_available" : True,
                 "priority" : "high",
-                "title" : title
+                "title" : title,
+                "fragment" : typ.encode('utf8')
                 }
             }
         headers={'Content-Type': 'application/json', 'Authorization': 'key=AAAA9gZGmR4:APA91bGM19qwIMmhqtoJ7TUiSBR57cHzMZIg2D-5Em3pnQ72ph1iFKKTS3iZDFRp43QKvVesGEm4guCSQTSWW9DsUS2S_DwGnJ0QempQGlktjTcgXRhXPFDAXPBnVpptDIxefChrcdEC'}
         response = requests.post(url, json.dumps(data), headers = headers)
-        print response
-    if typ.encode('utf8') == '4':
-        subject = request.POST.get('subject_title')
-        notes_type = request.POST.get('notes_type')
-        title = request.POST.get('notes_title')
-        link = request.POST.get('notes_link')
-        sub = Subject.objects.get(code = subject)
-        entry = Link(subject = sub, title = title, link = link, notesType = notes_type)
-        entry.save()
-        return HttpResponse("New notes added")
-    elif typ.encode('utf8') != '5':
-        title = request.POST.get('info_title')
-        details = request.POST.get('info_details')
-        date = request.POST.get('info_date')
-        entry = Info(title = title, infoType = typ, semester = sem, subInfos = details, date = date)
-        entry.save()
-        return HttpResponse("damn")
-    else:
-        return HttpResponse("Wow")
+    return HttpResponseRedirect('/web')
