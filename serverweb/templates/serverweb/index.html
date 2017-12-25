@@ -1,45 +1,216 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Simple Mobile Instant Learning Environment</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'serverweb/css/style.css' %}" />
-    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
-    <script>
-      // Initialize Firebase
-      var config = {
-        apiKey: "AIzaSyD1xt1vW7bslVd4WABHYdsxmt_cnqDWGB0",
-        authDomain: "smile-aff5a.firebaseapp.com",
-        databaseURL: "https://smile-aff5a.firebaseio.com",
-        projectId: "smile-aff5a",
-        storageBucket: "smile-aff5a.appspot.com",
-        messagingSenderId: "1056667244830"
-      };
-      firebase.initializeApp(config);
-    </script>
-    <script type="text/javascript">
-      initApp = function() {
-        firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {
-            // User is signed in.
-            window.location.replace('authorize');
+<!doctype html>
+<html lang="en">
 
-          } else {
-            // User is signed out.
-            window.location.replace('login');
+<head>
+	<title>S.M.I.L.E. | Administration</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script
+			  src="https://code.jquery.com/jquery-3.2.1.js"
+			  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+			  crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+	<script type="application/x-javascript">
+		addEventListener("load", function() {
+			setTimeout(hideURLbar, 0);
+		}, false);
 
-          }
-        }, function(error) {
-          console.log(error);
+		function hideURLbar() {
+			window.scrollTo(0, 1);
+		}
+		$(function() {
+    $('#type').change(function() {
+			if($('#type').val() === "4")
+			{
+				$('#subs').show();
+				$('#info').hide();
+
+			}
+			else if($('#type').val() === "5")
+			{
+				$('#subs').hide();
+				$('#info').hide();
+			}
+			else {
+				$('#subs').hide();
+				$('#info').show();
+
+			}
+    });
+});
+
+$(function() {
+$('#nchoice').change(function() {
+	if($('#nchoice').val() === "yes")
+	{
+		$('#notif').show();
+
+	}
+	else {
+		$('#notif').hide();
+
+	}
+});
+});
+
+		$(function() {
+    $('#semester').change(function() {
+        $.ajax({
+            url: 'get/subjects',
+            dataType: 'json',
+            type: 'POST',
+            // This is query string i.e. country_id=123
+            data: {semester : $('#semester').val(), csrfmiddlewaretoken: '{{ csrf_token }}'},
+            success: function(data) {
+                $('#subject').empty(); // clear the current elements in select box
+                for (row in data) {
+                    $('#subject').append($('<option></option>').attr('value', data[row].code).text(data[row].name));
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
         });
-      };
+    });
+});
+	</script>
+	<!-- font files -->
+	<link href='//fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+	<!-- /font files -->
+	<!-- css files -->
+	{% load static %}
+	<link href="{% static 'serverweb/style.css' %}" rel='stylesheet' type='text/css' media="all" />
+	<!-- /css files -->
+</head>
 
-      window.addEventListener('load', function() {
-        initApp()
-      });
-    </script>
-  </head>
 <body>
+	<h1 class="header-w3ls">S.M.I.L.E. Administration</h1>
+	<div class="content-w3ls">
+		<div class="form-w3ls">
+			<div class="w3ls-btn">
+				<div class="wthreesubmitaits">
+					<a style = "font-size: 20px; color: #fff" href="end">Log Out</a>
+				</div>
+			</div>
+			<form action="{% url 'submit' %}" method="post">
+				{% csrf_token %}
+				<div class="content-wthree1">
+					<div class="form-control">
+						<div class="main-row">
+							<label class="header">Choose Semester<span>*</span></label>
+							<select name="semester" id="semester">
+								<option value="none" selected="" disabled="">Semester</option>
+
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+							</select>
+							<i></i>
+
+						</div>
+					</div>
+					<div class="form-control">
+						<div class="main-row">
+							<label class="header">What are you adding?<span>*</span></label>
+							<select name="type" id="type">
+								<option value="none" selected="" disabled="">Info Type</option>
+								<option value="4">Notes</option>
+								<option value="1">Information</option>
+								<option value="2">Schedule</option>
+								<option value="3">Placement</option>
+								<option value="5">Nothing</option>
+							</select>
+							<i></i>
+
+						</div>
+					</div>
+					<div id="subs">
+					<div class="form-control">
+						<div class="main-row">
+							<label class="header">Choose Subject<span>*</span></label>
+							<select name="subject_title" id="subject">
+								<option value="none" selected="" disabled="">Subject</option>
+							</select>
+							<i></i>
+
+						</div>
+					</div>
+					<div class="form-control">
+						<div class="main-row">
+							<label class="header">Choose Notes Type<span>*</span></label>
+							<select name="notes_type">
+								<option value="none" selected="" disabled="">Notes type</option>
+
+								<option value="1">Class Notes</option>
+								<option value="2">Question Bank</option>
+								<option value="3">Staff Notes</option>
+								<option value="4">Test Questions</option>
+
+							</select>
+							<i></i>
+
+						</div>
+					</div>
+					<div class="form-control">
+						<label class="header">Notes title <span>*</span></label>
+						<input type="text" id="name" name="notes_title" placeholder="Notes title">
+					</div>
+					<div class="form-control">
+						<label class="header">Notes link <span>*</span></label>
+						<input type="text" id="name" name="notes_link" placeholder="Notes link">
+					</div>
+				</div>
+				<div id="info" hidden="">
+					<div class="grid-agileits1">
+						<div class="form-control">
+							<label class="header">Title <span>*</span></label>
+							<input type="text" id="name" name="info_title" placeholder="Information Title">
+						</div>
+						<div class="form-control">
+							<label class="header">Description :</label>
+							<input type="text" id="name" name="info_details"/>
+						</div>
+						<div class="form-control">
+							<label class="header">Date :</label>
+							<input type="date" name="info_date">
+						</div>
+					</div>
+				</div>
+				<div class="form-control">
+					<div class="main-row">
+						<label class="header">Send notification ?<span>*</span></label>
+						<select name="notif" id="nchoice">
+							<option value="none" selected="" disabled="">Yes / No</option>
+							<option value="yes">Yes</option>
+							<option value="no">No</option>
+						</select>
+						<i></i>
+					</div>
+				</div>
+				<div id="notif" hidden="">
+					<div class="grid-agileits1">
+						<div class="form-control">
+							<label class="header">Notification Title <span>*</span></label>
+							<input type="text" id="name" name="notif_title" placeholder="Notification Title">
+						</div>
+						<div class="form-control">
+							<label class="header">Message :</label>
+							<input type="text" id="name" name="notif_details" placeholder="Description"/>
+						</div>
+					</div>
+				</div>
+				</div>
+				<div class="w3ls-btn">
+					<div class="wthreesubmitaits">
+						<input type="submit" name="submit" value="Send">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
 </body>
+
 </html>
